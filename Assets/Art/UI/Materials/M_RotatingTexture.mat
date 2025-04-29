@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UI_RotatingTexture
+  m_Name: M_RotatingTexture
   m_Shader: {fileID: 4800000, guid: 3776df3ef5b5988458f5eb11cc38f50a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -24,6 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _RotationSpeed: 1
+    - _Rotation: 0
+    - _RotationSpeed: 0.3
     m_Colors: []
   m_BuildTextureStacks: []
