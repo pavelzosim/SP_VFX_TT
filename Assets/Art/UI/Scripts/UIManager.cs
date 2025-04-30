@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections;
+using System.Collections.Generic;
+using System;
 
 [ExecuteAlways]
 public class UIManager : MonoBehaviour
@@ -30,9 +33,11 @@ public class UIManager : MonoBehaviour
         [Tooltip("Text component to display sticker count")]
         public Text stickerText;
         [Tooltip("Popup to show when progress reaches max")]
-        public GameObject popupObject; // Added popup reference
+        public GameObject popupObject;
         [Tooltip("Container for debug elements")]
         public GameObject debugContainer;
+        [Tooltip("Text component to display current time")]
+        public Text timeText;
     }
 
     [Header("Slider Settings")]
@@ -49,28 +54,40 @@ public class UIManager : MonoBehaviour
     public CanvasGroup canvasGroup;
     public RectTransform rectTransform;
     private bool _maxValueReached;
-    
+
     [Header("Debug")]
     [Tooltip("Toggle visibility of progress bar elements")]
     public bool debugMode = true;
 
+    [Header("Dynamic Object Disabler")]
+    [Tooltip("List of objects to disable when maxValue is reached")]
+    public List<GameObject> objectsToDisable = new List<GameObject>();
+
     private Material _instancedMaterial;
     private bool _lastDebugState;
     private float _lastFillAmount;
+    private int _lastMaxValue;
+    private Coroutine _timeCoroutine;
 
     void OnEnable()
     {
         InitializeProgressBar();
         _lastDebugState = debugMode;
         UpdateDebugVisibility();
+        _lastMaxValue = settings.maxValue;
+
+        if (Application.isPlaying)
+        {
+            _timeCoroutine = StartCoroutine(UpdateTimeCoroutine());
+        }
     }
 
     void Update()
     {
         UpdateProgress();
         UpdateStickerText();
+        CheckMaxValueReset();
 
-        // Check for debug mode changes only if necessary
         if (_lastDebugState != debugMode)
         {
             UpdateDebugVisibility();
@@ -81,6 +98,11 @@ public class UIManager : MonoBehaviour
     void OnDisable()
     {
         CleanupMaterial();
+        if (_timeCoroutine != null)
+        {
+            StopCoroutine(_timeCoroutine);
+            _timeCoroutine = null;
+        }
     }
 
     private void InitializeProgressBar()
@@ -107,18 +129,22 @@ public class UIManager : MonoBehaviour
         settings.currentValue = Mathf.Clamp(settings.currentValue, 0, settings.maxValue);
         float fillAmount = (float)settings.currentValue / settings.maxValue;
 
-        if (settings.currentValue == settings.maxValue && targetReferences.popupObject != null)
+        if (settings.currentValue == settings.maxValue)
         {
-            if (!targetReferences.popupObject.activeSelf)
+            if (targetReferences.popupObject != null && !targetReferences.popupObject.activeSelf)
                 targetReferences.popupObject.SetActive(true);
+
+            DisableObjectsOnMaxValue();
+        }
+        else
+        {
+            EnableObjectsOnBelowMaxValue();
         }
 
-        // Animation trigger logic
         if (settings.currentValue == settings.maxValue)
         {
             if (!_maxValueReached)
             {
-                // Start fade-in animation only once when reaching max
                 PanelFadeIn();
                 _maxValueReached = true;
             }
@@ -127,13 +153,11 @@ public class UIManager : MonoBehaviour
         {
             if (_maxValueReached)
             {
-                // Start fade-out animation when dropping below max
                 PanelFadeOut();
                 _maxValueReached = false;
             }
         }
 
-        // Update visuals only if fill amount changes
         if (!Mathf.Approximately(fillAmount, _lastFillAmount))
         {
             _lastFillAmount = fillAmount;
@@ -141,7 +165,6 @@ public class UIManager : MonoBehaviour
             UpdateMaterial(fillAmount);
         }
 
-        // Update text regardless of debug mode
         UpdateProgressText();
     }
 
@@ -170,10 +193,35 @@ public class UIManager : MonoBehaviour
 
     private void UpdateDebugVisibility()
     {
-        // Use debugContainer to toggle all debug elements
         if (targetReferences.debugContainer != null)
         {
             targetReferences.debugContainer.SetActive(debugMode);
+        }
+    }
+
+    private IEnumerator UpdateTimeCoroutine()
+    {
+        while (true)
+        {
+            if (targetReferences.timeText != null)
+                targetReferences.timeText.text = DateTime.Now.ToString("HH:mm:ss");
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    private void CheckMaxValueReset()
+    {
+        if (settings.maxValue != _lastMaxValue)
+        {
+            settings.currentValue = 0;
+            _lastMaxValue = settings.maxValue;
+            _maxValueReached = false;
+
+            if (targetReferences.popupObject != null)
+                targetReferences.popupObject.SetActive(false);
+
+            EnableObjectsOnBelowMaxValue();
+            UpdateProgress();
         }
     }
 
@@ -183,64 +231,83 @@ public class UIManager : MonoBehaviour
             DestroyImmediate(_instancedMaterial);
     }
 
-    // Button Functionality
+    private void DisableObjectsOnMaxValue()
+    {
+        foreach (var obj in objectsToDisable)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(false);
+            }
+        }
+    }
 
-    // Sets the progress bar to 0% (empty bar)
+    private void EnableObjectsOnBelowMaxValue()
+    {
+        foreach (var obj in objectsToDisable)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(true);
+            }
+        }
+    }
+
     public void SetEmpty()
     {
         if (settings == null)
             return;
 
-        settings.currentValue = 0; // Set progress to 0%
+        settings.currentValue = 0;
         UpdateProgress();
         UpdateProgressText();
         UpdateStickerText();
     }
 
-    // Sets the progress bar to 100% (full bar)
     public void SetFull()
     {
         if (settings == null || settings.maxValue <= 0)
             return;
 
-        settings.currentValue = settings.maxValue; // Set progress to 100%
+        settings.currentValue = settings.maxValue;
         UpdateProgress();
         UpdateProgressText();
         UpdateStickerText();
     }
+public void SetRandom()
+{
+    if (settings == null || settings.maxValue <= 0)
+        return;
 
-    // Sets the progress bar to a random value between 10% and 100%
-    public void SetRandom()
-    {
-        if (settings == null || settings.maxValue <= 0)
-            return;
-
-        settings.currentValue = Random.Range(
-            Mathf.RoundToInt(settings.maxValue * 0.1f), // 10%
-            settings.maxValue + 1                      // 100% (inclusive)
-        );
-        UpdateProgress();
-        UpdateProgressText();
-        UpdateStickerText();
-    }
+    // Explicitly use UnityEngine.Random
+    settings.currentValue = UnityEngine.Random.Range(
+        Mathf.RoundToInt(settings.maxValue * 0.1f),
+        settings.maxValue + 1
+    );
+    UpdateProgress();
+    UpdateProgressText();
+    UpdateStickerText();
+}
 
     public void PanelFadeIn()
-    {   
+    {
         if (canvasGroup != null) canvasGroup.gameObject.SetActive(true);
         canvasGroup.alpha = 0f;
         rectTransform.transform.localPosition = new Vector3(0f, -1000f, 0f);
         rectTransform.DOAnchorPos(new Vector2(0f, 0f), fadeTime, false).SetEase(Ease.OutElastic);
         canvasGroup.DOFade(1, fadeTime);
     }
+
     public void PanelFadeOut()
     {
         canvasGroup.alpha = 1f;
         rectTransform.localPosition = Vector3.zero;
         rectTransform.DOAnchorPos(new Vector2(0f, -1000f), fadeTime)
             .SetEase(Ease.InOutQuint)
-            .OnComplete(() => {
+            .OnComplete(() =>
+            {
                 if (canvasGroup != null) canvasGroup.gameObject.SetActive(false);
             });
-        canvasGroup.DOFade(0, fadeTime); // Fixed fade-out to 0
+        canvasGroup.DOFade(0, fadeTime);
     }
 }

@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 2944125681949703547}
   - component: {fileID: 2471542393433877904}
   m_Layer: 5
-  m_Name: pref_AutoRoll
+  m_Name: pref_Panel_AutoRoll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
