@@ -595,9 +595,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6638071877437883471}
     m_Modifications:
+    - target: {fileID: 219588953573635774, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: m_FillAmount
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 7360326297195777430, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
       propertyPath: m_Text
-      value: 64/100
+      value: 70/100
       objectReference: {fileID: 0}
     - target: {fileID: 7360326297462951518, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
       propertyPath: m_Name

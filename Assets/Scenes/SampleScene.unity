@@ -450,46 +450,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 412214235}
   m_CullTransparentMesh: 1
---- !u!21 &442792753
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: M_ProgressBar (Instance)
-  m_Shader: {fileID: 4800000, guid: afce3549b4e29bd4a8073b9afe1a631a, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _ColorMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _ColorMask: 15
-    - _Fill: 0
-    - _Height: 1
-    - _Stencil: 1
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Width: 8
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-  m_BuildTextureStacks: []
 --- !u!1 &446675194
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,6 +486,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 637.065, y: 84.778015}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!1 &631623280 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1440166439548994538, guid: 30772b2ec6caec145a9037610a181057, type: 3}
+  m_PrefabInstance: {fileID: 6638071877033415326}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &643635509
 GameObject:
   m_ObjectHideFlags: 0
@@ -873,6 +838,7 @@ GameObject:
   - component: {fileID: 928712075}
   - component: {fileID: 928712077}
   - component: {fileID: 928712076}
+  - component: {fileID: 928712078}
   m_Layer: 5
   m_Name: VFX_DiceParticles
   m_TagString: Untagged
@@ -4622,7 +4588,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 4
     type: 1
-    collisionMode: 1
+    collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
     multiplyColliderForceByParticleSpeed: 0
@@ -4738,7 +4704,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4790,10 +4756,10 @@ ParticleSystem:
         m_RotationOrder: 4
     minKillSpeed: 0
     maxKillSpeed: 10000
-    radiusScale: 1
+    radiusScale: 1.5
     collidesWith:
       serializedVersion: 2
-      m_Bits: 32
+      m_Bits: 4294967295
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -4810,7 +4776,7 @@ ParticleSystem:
     colliderQueryMode: 1
     radiusScale: 1
     primitives:
-    - {fileID: 1811830010}
+    - {fileID: 1180725441}
   SubModule:
     serializedVersion: 2
     enabled: 0
@@ -5749,6 +5715,24 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!114 &928712078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 928712074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e7ef345097a40840843fbd5538f3606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VFX_DiceHit: {fileID: 928712077}
+  targetCollider: {fileID: 1180725442}
+  uiTargetToBounce: {fileID: 217734217}
+  bounceScale: 1.2
+  bounceDuration: 0.3
+  bounceEase: 30
 --- !u!1 &1064063502
 GameObject:
   m_ObjectHideFlags: 0
@@ -5880,9 +5864,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1432234829}
+      - m_Target: {fileID: 928712078}
         m_TargetAssemblyTypeName: VFX_ParticleCollide, Assembly-CSharp
-        m_MethodName: PlayVFX
+        m_MethodName: ToggleEmission
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5930,6 +5914,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1176202052}
   m_CullTransparentMesh: 1
+--- !u!224 &1180725441 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5812992222016300905, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
+  m_PrefabInstance: {fileID: 5401048017772194038}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1180725442 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 1180725442, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
+  m_PrefabInstance: {fileID: 5401048017772194038}
+  m_PrefabAsset: {fileID: 0}
+--- !u!21 &1280335409
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_ProgressBar (Instance)
+  m_Shader: {fileID: 4800000, guid: afce3549b4e29bd4a8073b9afe1a631a, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ColorMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ColorMask: 15
+    - _Fill: 0
+    - _Height: 1
+    - _Stencil: 1
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Width: 8
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
 --- !u!1 &1365364029
 GameObject:
   m_ObjectHideFlags: 0
@@ -6081,54 +6115,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1432234826}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e7ef345097a40840843fbd5538f3606, type: 3}
+  m_Script: {fileID: 11500000, guid: ddb03d11ee17fdb44980aad97f2460a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VFX_DiceHit: {fileID: 928712077}
-  targetCollider: {fileID: 1811830012}
-  uiElementToBounce: {fileID: 217734217}
-  bounceStrength: 0.5
-  bounceDuration: 5
---- !u!21 &1630220892
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: M_ProgressBar (Instance)
-  m_Shader: {fileID: 4800000, guid: afce3549b4e29bd4a8073b9afe1a631a, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _ColorMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _ColorMask: 15
-    - _Fill: 0
-    - _Height: 1
-    - _Stencil: 1
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Width: 8
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-  m_BuildTextureStacks: []
+  objectsToDisable:
+  - {fileID: 631623280}
 --- !u!1 &1671728803
 GameObject:
   m_ObjectHideFlags: 0
@@ -6212,9 +6203,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1432234829}
+      - m_Target: {fileID: 928712078}
         m_TargetAssemblyTypeName: VFX_ParticleCollide, Assembly-CSharp
-        m_MethodName: PlayVFX
+        m_MethodName: ToggleEmission
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6357,11 +6348,6 @@ CanvasRenderer:
 --- !u!224 &1811830010 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8193858187790305205, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
-  m_PrefabInstance: {fileID: 5401048017772194038}
-  m_PrefabAsset: {fileID: 0}
---- !u!61 &1811830012 stripped
-BoxCollider2D:
-  m_CorrespondingSourceObject: {fileID: 2668343147942344918, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
   m_PrefabInstance: {fileID: 5401048017772194038}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1901967475
@@ -6992,25 +6978,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: pref_Dice
       objectReference: {fileID: 0}
-    - target: {fileID: 2647706455277038634, guid: 2b44661b0b100fa4fb210b9c8e74e058, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3455767600179164816, guid: 2b44661b0b100fa4fb210b9c8e74e058, type: 3}
       propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3455767600179164816, guid: 2b44661b0b100fa4fb210b9c8e74e058, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.14
-      objectReference: {fileID: 0}
-    - target: {fileID: 3455767600179164816, guid: 2b44661b0b100fa4fb210b9c8e74e058, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.14
-      objectReference: {fileID: 0}
-    - target: {fileID: 3455767600179164816, guid: 2b44661b0b100fa4fb210b9c8e74e058, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.14
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3455767600179164816, guid: 2b44661b0b100fa4fb210b9c8e74e058, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7066,14 +7036,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 649187242}
     m_Modifications:
-    - target: {fileID: 1894396935, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 1894396936, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
-      propertyPath: m_Parameters.m_GravityCurve.scalar
-      value: 25
-      objectReference: {fileID: 0}
     - target: {fileID: 518128664819317119, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -7184,6 +7146,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pref_ProgressBar
       objectReference: {fileID: 0}
+    - target: {fileID: 1440166439548994538, guid: 30772b2ec6caec145a9037610a181057, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2322705165054790930, guid: 30772b2ec6caec145a9037610a181057, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -7271,7 +7237,7 @@ PrefabInstance:
     - target: {fileID: 4122526540086711041, guid: 30772b2ec6caec145a9037610a181057, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1630220892}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30772b2ec6caec145a9037610a181057, type: 3}
 --- !u!224 &6638071877033415327 stripped

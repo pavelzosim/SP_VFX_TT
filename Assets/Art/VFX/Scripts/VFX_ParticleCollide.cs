@@ -1,96 +1,108 @@
 using UnityEngine;
-using DG.Tweening;
+using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
+[RequireComponent(typeof(ParticleSystem))]
 public class VFX_ParticleCollide : MonoBehaviour
 {
+    [Header("Particle System")]
     public ParticleSystem VFX_DiceHit;
-    public BoxCollider2D targetCollider;
-    public RectTransform uiElementToBounce;
-    public float bounceStrength = 0.2f;
+
+    [Header("Collision Target")]
+    public Collider targetCollider; // Use 3D Collider
+
+    [Header("UI Bounce Target")]
+    public RectTransform uiTargetToBounce;
+
+    [Header("Bounce Animation Settings")]
+    public float bounceScale = 1.2f;
     public float bounceDuration = 0.3f;
+    public Ease bounceEase = Ease.OutBounce;
 
-void Start()
-{
-    // Remove the manual OnParticleTrigger call
-    if (VFX_DiceHit != null)
+    private List<ParticleCollisionEvent> collisionEvents = new List<ParticleCollisionEvent>();
+
+    void Awake()
     {
-        // Ensure simulation space is world space for proper collision detection
-        var mainModule = VFX_DiceHit.main;
-        mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
-        
-        // Reset previous particles and prepare system
-        VFX_DiceHit.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        mainModule.playOnAwake = false;
-        mainModule.loop = false;
-
-        // Configure trigger module
-        var triggerModule = VFX_DiceHit.trigger;
-        triggerModule.enabled = true;
-        triggerModule.SetCollider(0, targetCollider);
-        triggerModule.inside = ParticleSystemOverlapAction.Kill;
-    }
-}
-
-void OnParticleTrigger()
-{
-    // Only process if we have a valid particle system
-    if (VFX_DiceHit == null) return;
-
-    List<ParticleSystem.Particle> particles = new List<ParticleSystem.Particle>();
-    
-    // Get entering particles
-    int numEntered = VFX_DiceHit.GetTriggerParticles(
-        ParticleSystemTriggerEventType.Enter, 
-        particles,
-        out var collisionData
-    );
-
-    if (numEntered > 0)
-    {
-        BounceUIElement();
-        // Update particle system with modified particles
-        VFX_DiceHit.SetTriggerParticles(ParticleSystemTriggerEventType.Enter, particles);
-    }
-}
-void BounceUIElement()
-{
-    if (uiElementToBounce == null)
-    {
-        Debug.LogError("uiElementToBounce is not assigned!");
-        return;
+        if (VFX_DiceHit == null)
+            VFX_DiceHit = GetComponent<ParticleSystem>();
     }
 
-    // Kill any running animations on the UI element
-    uiElementToBounce.DOKill(true);
+    void OnParticleCollision(GameObject other)
+    {
+        int eventCount = VFX_DiceHit.GetCollisionEvents(other, collisionEvents);
 
-    // Save the original scale of the UI element
-    Vector3 originalScale = uiElementToBounce.localScale;
+        if (eventCount == 0)
+        {
+            Debug.Log("[DEBUG] No particle collision events received.");
+            return;
+        }
 
-    // Log message to confirm bounce animation is starting
-    Debug.Log("Starting bounce animation!");
+        for (int i = 0; i < eventCount; i++)
+        {
+            var evt = collisionEvents[i];
 
-    // Play the bounce animation
-    uiElementToBounce.DOPunchScale(
-        new Vector3(bounceStrength, bounceStrength, 0f),
-        bounceDuration,
-        vibrato: 3,
-        elasticity: 0.5f
-    ).SetEase(Ease.OutQuad)
-     .OnComplete(() =>
-     {
-         // Restore the original scale after animation completes
-         uiElementToBounce.localScale = originalScale;
-         Debug.Log("Bounce animation completed!");
-     });
-}
+            if (evt.colliderComponent != null)
+                Debug.Log($"[DEBUG] Hit detected on collider: {evt.colliderComponent.name}", this);
+            else
+                Debug.Log("[DEBUG] Event has NULL colliderComponent", this);
 
-    public void PlayVFX()
+            if (evt.colliderComponent == targetCollider)
+            {
+                Debug.Log($"[HIT] Particle hit TARGET: {targetCollider.name} at {evt.intersection}", this);
+                TriggerBounceUI();
+            }
+        }
+    }
+
+    private void TriggerBounceUI()
+    {
+        if (uiTargetToBounce == null)
+        {
+            Debug.LogWarning("UI target for bounce is not assigned.");
+            return;
+        }
+
+        // Kill any running tween on the UI object first
+        uiTargetToBounce.DOKill();
+
+        // Reset to original scale (just in case)
+        uiTargetToBounce.localScale = Vector3.one;
+
+        // Perform the bounce scale animation
+        uiTargetToBounce
+            .DOScale(bounceScale, bounceDuration)
+            .SetEase(bounceEase)
+            .OnComplete(() =>
+            {
+                uiTargetToBounce.DOScale(1f, bounceDuration * 0.5f).SetEase(Ease.OutQuad);
+            });
+
+        Debug.Log("[DEBUG] Triggered UI bounce.");
+    }
+
+    public void ToggleEmission()
+    {
+        if (VFX_DiceHit == null) return;
+
+        if (VFX_DiceHit.isEmitting)
+        {
+            VFX_DiceHit.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            Debug.Log("[DEBUG] Stopped particle emission", this);
+        }
+        else
+        {
+            VFX_DiceHit.Play(true);
+            Debug.Log("[DEBUG] Started particle emission", this);
+        }
+    }
+
+    public void EmitBurst(int count)
     {
         if (VFX_DiceHit != null)
         {
-            VFX_DiceHit.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            VFX_DiceHit.Play(true);
+            VFX_DiceHit.Emit(count);
+            Debug.Log($"[DEBUG] Emitted {count} particles", this);
         }
     }
 }
