@@ -467,17 +467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e7ef345097a40840843fbd5538f3606, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &1180725441 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5812992222016300905, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
-  m_PrefabInstance: {fileID: 5401048017772194038}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &1180725442 stripped
-BoxCollider:
-  m_CorrespondingSourceObject: {fileID: 1180725442, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
-  m_PrefabInstance: {fileID: 5401048017772194038}
-  m_PrefabAsset: {fileID: 0}
---- !u!21 &1387114144
+--- !u!21 &1095441505
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -517,6 +507,16 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+--- !u!224 &1180725441 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5812992222016300905, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
+  m_PrefabInstance: {fileID: 5401048017772194038}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1180725442 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 1180725442, guid: 6fed5c1ed695b064bac1ade4b6079406, type: 3}
+  m_PrefabInstance: {fileID: 5401048017772194038}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1432234826
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,7 +565,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     maxValue: 100
-    currentValue: 70
+    currentValue: 50
   stickerSettings:
     stickerCount: 1
   targetReferences:
@@ -1224,6 +1224,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2666251812814004010, guid: 4ffd9270de7e61d41b15fd4796145dac, type: 3}
+      propertyPath: m_Alpha
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ffd9270de7e61d41b15fd4796145dac, type: 3}
 --- !u!1001 &5401048017772194038
@@ -1455,6 +1459,10 @@ PrefabInstance:
     - target: {fileID: 1440166439548994538, guid: 30772b2ec6caec145a9037610a181057, type: 3}
       propertyPath: m_Name
       value: pref_Panel_ProgressBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 1440166439548994538, guid: 30772b2ec6caec145a9037610a181057, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2322705165054790930, guid: 30772b2ec6caec145a9037610a181057, type: 3}
       propertyPath: m_Pivot.x
