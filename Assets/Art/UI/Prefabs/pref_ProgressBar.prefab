@@ -236,7 +236,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 23:59:59
+  m_Text: 23
 --- !u!1 &6638071876386307289
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,6 +595,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6638071877437883471}
     m_Modifications:
+    - target: {fileID: 7360326297195777430, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: m_Text
+      value: 64/100
+      objectReference: {fileID: 0}
     - target: {fileID: 7360326297462951518, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
       propertyPath: m_Name
       value: ProgressBar
@@ -682,6 +686,34 @@ PrefabInstance:
     - target: {fileID: 7360326297462951585, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396810669222025290, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: ShapeModule.m_Scale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396810669222025290, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: ShapeModule.m_Scale.y
+      value: 0.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396810669222025290, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: ShapeModule.m_Scale.z
+      value: 0.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396810669222025290, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396810669222025290, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396810669222025290, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396810669222025290, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}
+      propertyPath: InitialModule.startSpeed.minScalar
+      value: 0.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62f8804aeb9f3b442bd544d6b4a19aad, type: 3}

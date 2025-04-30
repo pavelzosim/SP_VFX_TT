@@ -1,55 +1,61 @@
-Shader "UI/OneLightSource"
+Shader "UI/DiffuseWithDrDl"
 {
     Properties
     {
-        _MainTex ("Image Texture", 2D) = "white" {}
-        _LightColor ("Light Color", Color) = (1,1,1,1)
+        _MainTex    ("Texture",          2D)   = "white" {}
+        _ColorRefl  ("Light Reflection", Color)= (1,1,1,1)
+        _LightInt   ("Light Intensity",  Range(0,5)) = 1
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+        Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" }
+
+        HLSLINCLUDE
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            struct Attributes { float4 positionOS:POSITION; float2 uv:TEXCOORD0; float3 normalOS:NORMAL; };
+            struct Varyings   { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; float3 normalWS:TEXCOORD1; };
+        ENDHLSL
 
         Pass
         {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+            Name "UniversalForward"
+            Tags { "LightMode"="UniversalForward" }
 
-            sampler2D _MainTex;
-            float4 _LightColor;
+            HLSLPROGRAM
+                #pragma vertex vert
+                #pragma fragment frag
 
-            struct appdata_t
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+                TEXTURE2D(_MainTex);
+                SAMPLER(sampler_MainTex);
 
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                float4 pos : SV_POSITION;
-            };
+                CBUFFER_START(UnityPerMaterial)
+                    float4 _ColorRefl;
+                    float  _LightInt;
+                    float4 _MainTex_ST;
+                CBUFFER_END
 
-            v2f vert (appdata_t v)
-            {
-                v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
-                return o;
-            }
+                Varyings vert(Attributes IN)
+                {
+                    Varyings OUT;
+                    OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
+                    OUT.uv         = TRANSFORM_TEX(IN.uv, _MainTex);
+                    OUT.normalWS   = normalize(TransformObjectToWorldNormal(IN.normalOS));
+                    return OUT;
+                }
 
-            float4 frag (v2f i) : SV_Target
-            {
-                float4 texColor = tex2D(_MainTex, i.uv);
+                half4 frag(Varyings IN) : SV_Target
+                {
+                    Light mainLight = GetMainLight();
+                    float3 L        = mainLight.direction;
+                    float  NdotL    = max(0, dot(IN.normalWS, L));
+                    float3 diffuse  = _ColorRefl.rgb * _LightInt * NdotL;
 
-                // Multiply by light color for optional light effect
-                float4 finalColor = texColor * _LightColor;
-
-                return finalColor;
-            }
-            ENDCG
+                    half4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                    texColor.rgb  *= diffuse;
+                    return texColor;
+                }
+            ENDHLSL
         }
     }
-    FallBack "Unlit/Texture"
 }
